@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SomeMsger - Group {{ group }}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/script.js"></script>
+    <script>
+        window.onload = function() {
+            initializeChat({{ session['user_id'] }}, {{ last_message_id }});
+            startPolling(true, '{{ group_id }}');
+        };
+    </script>
+</head>
+<body>
+    <header>
+        <div class="logo">SomeMsger</div>
+        <nav>
+            <button onclick="createGroup()">*create group*</button>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="sidebar">
+            {% for group_item in groups %}
+                <div class="item">
+                    <img src="https://via.placeholder.com/30" alt="Group Icon">
+                    <a href="/groups/{{ group_item[1] }}">{{ group_item[1] }} ({{ group_item[0] }})</a>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="main">
+            <header>
+                <div class="item">
+                    <img src="https://via.placeholder.com/40" alt="Group Icon">
+                    <span>{{ group }} ({{ group_id }})</span>
+                </div>
+            </header>
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {{ 'sent' if message[1] == session['user_id'] else 'received' }}">
+                        <div class="bubble">{{ message[3] }}</div>
+                        <span class="time">{{ message[4] }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="chat-input">
+                <input type="text" id="message-input" placeholder="Some text...">
+                <button onclick="sendMessage(true, '{{ group_id }}')">Send</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

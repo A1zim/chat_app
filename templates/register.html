@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SomeMsger - Register</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">SomeMsger</div>
+    </header>
+    <div class="form-container">
+        <h2>REGISTRATION</h2>
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        <form method="POST" action="/register">
+            <input type="text" name="username" placeholder="NICKNAME" required>
+            <input type="email" name="email" placeholder="EMAIL" required>
+            <input type="password" name="password" placeholder="PASSWORD" required>
+            <input type="password" name="confirm_password" placeholder="CONFIRM PASSWORD" required>
+            <button type="submit">REGISTER</button>
+        </form>
+        <p>ALREADY REGISTERED? <a href="/login">LOGIN</a></p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SomeMsger - Search</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/script.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">SomeMsger</div>
+        <nav>
+            <a href="/chats">Back to Chats</a>
+        </nav>
+    </header>
+    <div class="main">
+        <div class="search-container">
+            <h2>Search Users</h2>
+            <input type="text" id="search-input" placeholder="Enter nickname..." oninput="searchUsers()">
+            <div id="suggestions" class="suggestions"></div>
+        </div>
+    </div>
+</body>
+</html>

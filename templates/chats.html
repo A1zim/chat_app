@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SomeMsger - Chats</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/script.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">SomeMsger</div>
+        <nav>
+            <a href="/search">*search*</a>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="sidebar">
+            <h3>Friends</h3>
+            {% for friend in friends %}
+                <div class="item">
+                    <img src="https://via.placeholder.com/30" alt="Avatar">
+                    <a href="/chats/{{ friend }}">{{ friend }}</a>
+                </div>
+            {% endfor %}
+            <h3>Pending Requests</h3>
+            {% for request in pending_requests %}
+                <div class="item">
+                    <img src="https://via.placeholder.com/30" alt="Avatar">
+                    <span>{{ request }}</span>
+                    <button onclick="acceptFriendRequest('{{ request }}')">Accept</button>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="main">
+            <p>Select a friend to start chatting.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SomeMsger - Login</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">SomeMsger</div>
+    </header>
+    <div class="form-container">
+        <h2>LOGGING IN</h2>
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        <form method="POST" action="/login">
+            <input type="text" name="username_or_email" placeholder="NICKNAME OR EMAIL" required>
+            <input type="password" name="password" placeholder="PASSWORD" required>
+            <a href="#" style="display: block; margin: 10px 0;">Forgot password?</a>
+            <button type="submit">LOGIN</button>
+        </form>
+        <p>HAVEN'T REGISTERED YET? <a href="/register">REGISTER</a></p>
+    </div>
+</body>
+</html>

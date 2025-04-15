@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SomeMsger - Welcome</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: linear-gradient(to bottom, #87CEEB, #E0F7FA);
+            color: #333;
+        }
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        .welcome-text {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 100px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: bold;
+            text-align: center;
+        }
+        .content {
+            text-align: center;
+            margin-top: 40vh;
+        }
+        .tagline {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .tagline span {
+            color: #1E90FF;
+        }
+        .start-button {
+            background-color: #333;
+            color: white;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .start-button:hover {
+            background-color: #555;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #2F4F4F;
+            color: white;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">SomeMsger</div>
+    <div class="welcome-text">WELCOME!</div>
+    <div class="content">
+        <div class="tagline">SomeMsger- <span>More than WebChat<br>Create new account now!</span></div>
+        <a href="/login" class="start-button">Start chatting</a>
+    </div>
+    <footer>&copy; 2025 SomeMsger. ALL RIGHTS RESERVED.</footer>
+</body>
+</html>
