@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SomeMsger - Verify Code</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script>
+        function moveToNext(current, nextField) {
+            if (current.value.length >= 1) {
+                document.getElementById(nextField).focus();
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <div class="logo">SomeMsger</div>
+    </header>
+    <div class="form-container">
+        <h2>VERIFY EMAIL</h2>
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        <form method="POST" action="/verify_code">
+            <div class="code-inputs">
+                <input type="text" id="digit1" name="digit1" maxlength="1" oninput="moveToNext(this, 'digit2')" required>
+                <input type="text" id="digit2" name="digit2" maxlength="1" oninput="moveToNext(this, 'digit3')" required>
+                <input type="text" id="digit3" name="digit3" maxlength="1" oninput="moveToNext(this, 'digit4')" required>
+                <input type="text" id="digit4" name="digit4" maxlength="1" oninput="moveToNext(this, 'digit5')" required>
+                <input type="text" id="digit5" name="digit5" maxlength="1" oninput="moveToNext(this, 'digit6')" required>
+                <input type="text" id="digit6" name="digit6" maxlength="1" required>
+            </div>
+            <div class="form-buttons">
+                <a href="/register" class="cancel-button">CANCEL</a>
+                <button type="submit" class="submit-button">SUBMIT</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

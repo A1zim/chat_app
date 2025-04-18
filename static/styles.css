@@ -268,3 +268,48 @@ nav a, nav button {
     font-size: 16px;
     font-weight: bold;
 }
+
+.code-inputs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.code-inputs input {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    font-size: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.cancel-button {
+    background-color: #fff;
+    color: #333;
+    padding: 10px 30px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.submit-button {
+    background-color: #1E90FF;
+    color: white;
+    padding: 10px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background-color: #4682B4;
+}

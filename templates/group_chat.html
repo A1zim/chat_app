@@ -8,7 +8,7 @@
     <script src="/static/script.js"></script>
     <script>
         window.onload = function() {
-            initializeChat({{ session['user_id'] }}, {{ last_message_id }});
+            initializeChat("{{ session['user_id']|tojson }}, {{ last_message_id|tojson }}");
             startPolling(true, '{{ group_id }}');
         };
     </script>
