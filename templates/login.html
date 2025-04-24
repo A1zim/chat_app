@@ -4,21 +4,114 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SomeMsger - Login</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fff;
+        }
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-container {
+            width: 300px;
+            text-align: center;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #000;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .error {
+            color: #dc3545;
+            text-align: center;
+            margin: 10px 0;
+        }
+        form {
+            width: 100%;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            color: #000;
+            font-size: 14px;
+        }
+        input::placeholder {
+            color: #6c757d;
+            text-transform: uppercase;
+        }
+        .forgot-password {
+            display: block;
+            text-align: right;
+            margin: 10px 0;
+            color: #1E90FF;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+        button:hover {
+            background-color: #333;
+        }
+        p {
+            margin-top: 20px;
+            color: #1E90FF;
+            font-size: 14px;
+        }
+        p a {
+            color: #1E90FF;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+        p a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <div class="logo">SomeMsger</div>
-    </header>
+    <div class="logo">SomeMsger</div>
     <div class="form-container">
         <h2>LOGGING IN</h2>
         {% if error %}
-            <p style="color: red;">{{ error }}</p>
+            <p class="error">{{ error }}</p>
         {% endif %}
         <form method="POST" action="/login">
             <input type="text" name="username_or_email" placeholder="NICKNAME OR EMAIL" required>
             <input type="password" name="password" placeholder="PASSWORD" required>
-            <a href="/forgot_password" style="display: block; margin: 10px 0;">Forgot password?</a>
+            <a href="/forgot_password" class="forgot-password">Forgot password?</a>
             <button type="submit">LOGIN</button>
         </form>
         <p>HAVEN'T REGISTERED YET? <a href="/register">REGISTER</a></p>

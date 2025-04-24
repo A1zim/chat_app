@@ -4,52 +4,303 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SomeMsger - Chat with {{ username }}</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
     <script src="/static/script.js"></script>
-    <script>
-        window.onload = function() {
-            initializeChat("{{ session['user_id'] }}", "{{ last_message_id }}");
-            startPolling();
-        };
-    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f0f0f0;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        nav {
+            display: flex;
+            gap: 15px;
+        }
+        nav a {
+            color: #6C757D;
+            text-decoration: none;
+        }
+        nav a:hover {
+            color: #333;
+        }
+        nav svg {
+            width: 16px;
+            height: 16px;
+        }
+        .app-container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 60px);
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #fff;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+            text-decoration: none;
+            background-color: transparent;
+        }
+        .tab.active {
+            background-color: #D3D3D3;
+        }
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            position: relative;
+        }
+        .chat-item.active {
+            background-color: #D3D3D3;
+        }
+        .avatar {
+            width: 30px;
+            height: 30px;
+            background-color: #ccc;
+            border-radius: 50%;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .avatar svg {
+            width: 20px;
+            height: 20px;
+            color: #fff;
+        }
+        .online-dot {
+            position: absolute;
+            left: 30px;
+            bottom: 15px;
+            width: 10px;
+            height: 10px;
+            background-color: #28a745;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+        .chat-info {
+            flex: 1;
+        }
+        .chat-name {
+            font-size: 16px;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+        .sidebar-link svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+        }
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            padding: 10px 20px;
+            background-color: #D3D3D3;
+            border-bottom: 1px solid #ddd;
+        }
+        .chat-header h2 {
+            font-size: 18px;
+            color: #333;
+        }
+        .messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #fff;
+        }
+        .message {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+        .message.sent {
+            align-items: flex-end;
+        }
+        .message.received {
+            align-items: flex-start;
+        }
+        .bubble {
+            max-width: 60%;
+            padding: 10px;
+            border-radius: 10px;
+            position: relative;
+        }
+        .message.sent .bubble {
+            background-color: #E6F0FA;
+        }
+        .message.received .bubble {
+            background-color: #F8F9FA;
+        }
+        .sender {
+            font-size: 12px;
+            color: #6C757D;
+            margin-bottom: 5px;
+        }
+        .content {
+            font-size: 14px;
+        }
+        .timestamp {
+            font-size: 12px;
+            color: #6C757D;
+            margin-top: 5px;
+        }
+        .message-form {
+            display: flex;
+            padding: 10px;
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+        }
+        .message-form input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        .message-form button {
+            padding: 10px 20px;
+            background-color: #1E90FF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .message-form button:hover {
+            background-color: #1c87e6;
+        }
+    </style>
 </head>
 <body>
     <header>
         <div class="logo">SomeMsger</div>
         <nav>
-            <a href="/search">*search*</a>
+            <a href="/chats">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+            </a>
+            <a href="/settings/profile">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 12a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8zm7-7a4 4 0 1 1 8 0"/>
+                </svg>
+            </a>
         </nav>
     </header>
-    <div class="container">
+    <div class="app-container">
         <div class="sidebar">
-            {% for friend in friends %}
-                <div class="item">
-                    <img src="https://via.placeholder.com/30" alt="Avatar">
-                    <a href="/chats/{{ friend }}">{{ friend }}</a>
-                </div>
-            {% endfor %}
-        </div>
-        <div class="main">
-            <header>
-                <div class="item">
-                    <img src="https://via.placeholder.com/40" alt="Avatar">
-                    <span>{{ username }}</span>
-                </div>
-            </header>
-            <div class="messages">
-                {% for message in messages %}
-                    <div class="message {{ 'sent' if message[1] == session['user_id'] else 'received' }}">
-                        <div class="bubble">{{ message[3] }}</div>
-                        <span class="time">{{ message[4] }}</span>
-                    </div>
+            <div class="tabs">
+                <a href="/chats" class="tab active">Chats</a>
+                <a href="/groups" class="tab">Groups</a>
+            </div>
+            <div class="chat-list">
+                {% for friend in friends %}
+                    <a href="/chats/{{ friend }}" class="chat-item {{ 'active' if friend == username }}">
+                        <div class="avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="chat-info">
+                            <span class="chat-name">{{ friend }}</span>
+                        </div>
+                        {% if friend == username %}
+                            <span class="online-dot"></span>
+                        {% endif %}
+                    </a>
                 {% endfor %}
             </div>
-            <div class="chat-input">
-                <input type="hidden" id="receiver" value="{{ username }}">
-                <input type="text" id="message-input" placeholder="Some text...">
-                <button onclick="sendMessage()">Send</button>
+            <a href="/settings/profile" class="sidebar-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 12a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8zm7-7a4 4 0 1 1 8 0"/>
+                </svg>
+                Settings
+            </a>
+            <a href="/logout" class="sidebar-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                </svg>
+                Logout
+            </a>
+        </div>
+        <div class="chat-container">
+            <header class="chat-header">
+                <h2>{{ username }}</h2>
+            </header>
+            <div class="messages" id="messages">
+                {% set last_message_id = 0 %}
+                {% for message in messages %}
+                    <div class="message {{ 'sent' if message[1] == session.user_id else 'received' }}">
+                        <div class="bubble">
+                            <span class="sender">{{ message[8] }}</span>
+                            <span class="content">{{ message[3] }}</span>
+                        </div>
+                        <span class="timestamp">{{ message[4] }}</span>
+                    </div>
+                    {% if message[0] > last_message_id %}
+                        {% set last_message_id = message[0] %}
+                    {% endif %}
+                {% endfor %}
             </div>
+            <form class="message-form" onsubmit="sendMessage(event, '{{ username }}', false)">
+                <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off">
+                <button type="submit">Send</button>
+            </form>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeChat("{{ session.user_id | tojson }}", "{{ username | tojson }}", false, null, "{{ last_message_id }}", "{{ session.username | tojson }}");
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        });
+    </script>
 </body>
 </html>

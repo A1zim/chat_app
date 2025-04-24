@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SomeMsger - Account Settings</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/script.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">SomeMsger</div>
+        <nav>
+            <a href="/chats">Chats</a>
+            <a href="/groups">Groups</a>
+            <a href="/settings/profile" class="active">Settings</a>
+            <a href="/search">*search*</a>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="sidebar">
+            <h3>Settings</h3>
+            <a href="/settings/profile" class="sidebar-link">Profile</a>
+            <a href="/settings/styles" class="sidebar-link">Styles</a>
+            <a href="/settings/account" class="sidebar-link active">Account</a>
+            <a href="/logout" class="sidebar-link">
+                <span style="display: inline-flex; align-items: center;">
+                    <svg style="margin-right: 5px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                    </svg>
+                    Logout
+                </span>
+            </a>
+        </div>
+        <div class="main">
+            <h2>Account Settings</h2>
+            <div class="settings-section">
+                <p><strong>Email:</strong> {{ user[1][:2] + '***@' + user[1].split('@')[1] }}</p>
+                <p><strong>Username:</strong> {{ user[2] }} <button onclick="toggleEditUsername()">Edit Username</button></p>
+                <form id="username-form" style="display: none;">
+                    <label for="username">New Username:</label>
+                    <input type="text" id="username" value="{{ user[2] }}" required>
+                    <button type="button" onclick="updateUsername()">Save</button>
+                    <button type="button" onclick="toggleEditUsername()">Cancel</button>
+                </form>
+                <p><a href="#" onclick="toggleChangePasswordForm()">Change Password</a></p>
+                <form id="change-password-form" style="display: none;">
+                    <label for="old_password">Old Password:</label>
+                    <input type="password" id="old_password" required>
+                    <label for="new_password">New Password:</label>
+                    <input type="password" id="new_password" required>
+                    <label for="confirm_password">Confirm New Password:</label>
+                    <input type="password" id="confirm_password" required>
+                    <button type="button" onclick="changePassword()">Save</button>
+                    <button type="button" onclick="toggleChangePasswordForm()">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function toggleEditUsername() {
+            const form = document.getElementById('username-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>

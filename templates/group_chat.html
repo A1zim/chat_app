@@ -4,51 +4,367 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SomeMsger - Group {{ group }}</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
     <script src="/static/script.js"></script>
-    <script>
-        window.onload = function() {
-            initializeChat("{{ session['user_id']|tojson }}, {{ last_message_id|tojson }}");
-            startPolling(true, '{{ group_id }}');
-        };
-    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f0f0f0;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        nav {
+            display: flex;
+            gap: 15px;
+        }
+        nav a {
+            color: #6C757D;
+            text-decoration: none;
+        }
+        nav a:hover {
+            color: #333;
+        }
+        nav svg {
+            width: 16px;
+            height: 16px;
+        }
+        .app-container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 60px);
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #fff;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+            text-decoration: none;
+            background-color: transparent;
+        }
+        .tab.active {
+            background-color: #D3D3D3;
+        }
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            position: relative;
+        }
+        .chat-item.active {
+            background-color: #D3D3D3;
+        }
+        .avatar {
+            width: 30px;
+            height: 30px;
+            background-color: #ccc;
+            border-radius: 50%;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .avatar svg {
+            width: 20px;
+            height: 20px;
+            color: #fff;
+        }
+        .online-dot {
+            position: absolute;
+            left: 30px;
+            bottom: 15px;
+            width: 10px;
+            height: 10px;
+            background-color: #28a745;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+        .chat-info {
+            flex: 1;
+        }
+        .chat-name {
+            font-size: 16px;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+        .sidebar-link svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+        }
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            padding: 10px 20px;
+            background-color: #D3D3D3;
+            border-bottom: 1px solid #ddd;
+        }
+        .chat-header h2 {
+            font-size: 18px;
+            color: #333;
+        }
+        .messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #fff;
+        }
+        .message {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+        .message.sent {
+            align-items: flex-end;
+        }
+        .message.received {
+            align-items: flex-start;
+        }
+        .bubble {
+            max-width: 60%;
+            padding: 10px;
+            border-radius: 10px;
+            position: relative;
+        }
+        .message.sent .bubble {
+            background-color: #E6F0FA;
+        }
+        .message.received .bubble {
+            background-color: #F8F9FA;
+        }
+        .sender {
+            font-size: 12px;
+            color: #6C757D;
+            margin-bottom: 5px;
+        }
+        .content {
+            font-size: 14px;
+        }
+        .timestamp {
+            font-size: 12px;
+            color: #6C757D;
+            margin-top: 5px;
+        }
+        .message-form {
+            display: flex;
+            padding: 10px;
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+        }
+        .message-form input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        .message-form button {
+            padding: 10px 20px;
+            background-color: #1E90FF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .message-form button:hover {
+            background-color: #1c87e6;
+        }
+        .add-member-btn {
+            margin: 10px;
+            padding: 10px;
+            background-color: #6c757d;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .add-member-btn:hover {
+            background-color: #5a6268;
+        }
+        #add-member-form {
+            margin: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        #add-member-form select {
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+        }
+        #add-member-form button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #add-member-form button:first-of-type {
+            background-color: #1E90FF;
+            color: #fff;
+        }
+        #add-member-form button:first-of-type:hover {
+            background-color: #1c87e6;
+        }
+        #add-member-form button:last-of-type {
+            background-color: #6c757d;
+            color: #fff;
+        }
+        #add-member-form button:last-of-type:hover {
+            background-color: #5a6268;
+        }
+        .members {
+            padding: 10px 20px;
+            font-size: 14px;
+            color: #6C757D;
+        }
+    </style>
 </head>
 <body>
     <header>
         <div class="logo">SomeMsger</div>
         <nav>
-            <button onclick="createGroup()">*create group*</button>
+            <a href="/chats">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+            </a>
+            <a href="/settings/profile">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 12a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8zm7-7a4 4 0 1 1 8 0"/>
+                </svg>
+            </a>
         </nav>
     </header>
-    <div class="container">
+    <div class="app-container">
         <div class="sidebar">
-            {% for group_item in groups %}
-                <div class="item">
-                    <img src="https://via.placeholder.com/30" alt="Group Icon">
-                    <a href="/groups/{{ group_item[1] }}">{{ group_item[1] }} ({{ group_item[0] }})</a>
-                </div>
-            {% endfor %}
-        </div>
-        <div class="main">
-            <header>
-                <div class="item">
-                    <img src="https://via.placeholder.com/40" alt="Group Icon">
-                    <span>{{ group }} ({{ group_id }})</span>
-                </div>
-            </header>
-            <div class="messages">
-                {% for message in messages %}
-                    <div class="message {{ 'sent' if message[1] == session['user_id'] else 'received' }}">
-                        <div class="bubble">{{ message[3] }}</div>
-                        <span class="time">{{ message[4] }}</span>
-                    </div>
+            <div class="tabs">
+                <a href="/chats" class="tab">Chats</a>
+                <a href="/groups" class="tab active">Groups</a>
+            </div>
+            <div class="chat-list">
+                {% for g in groups %}
+                    <a href="/groups/{{ g[1] }}" class="chat-item {{ 'active' if g[1] == group }}">
+                        <div class="avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                        <div class="chat-info">
+                            <span class="chat-name">{{ g[1] }}</span>
+                        </div>
+                        {% if g[1] == group %}
+                            <span class="online-dot"></span>
+                        {% endif %}
+                    </a>
                 {% endfor %}
             </div>
-            <div class="chat-input">
-                <input type="text" id="message-input" placeholder="Some text...">
-                <button onclick="sendMessage(true, '{{ group_id }}')">Send</button>
+            <a href="/settings/profile" class="sidebar-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 12a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8zm7-7a4 4 0 1 1 8 0"/>
+                </svg>
+                Settings
+            </a>
+            <a href="/logout" class="sidebar-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                </svg>
+                Logout
+            </a>
+        </div>
+        <div class="chat-container">
+            <header class="chat-header">
+                <h2>{{ group }}</h2>
+            </header>
+            <div class="messages" id="messages">
+                {% set last_message_id = 0 %}
+                {% for message in messages %}
+                    <div class="message {{ 'sent' if message[1] == session.user_id else 'received' }}">
+                        <div class="bubble">
+                            <span class="sender">{{ message[8] }}</span>
+                            <span class="content">{{ message[3] }}</span>
+                        </div>
+                        <span class="timestamp">{{ message[4] }}</span>
+                    </div>
+                    {% if message[0] > last_message_id %}
+                        {% set last_message_id = message[0] %}
+                    {% endif %}
+                {% endfor %}
             </div>
+            <form class="message-form" onsubmit="sendMessage(event, null, true, '{{ group_id }}')">
+                <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off">
+                <button type="submit">Send</button>
+            </form>
+            {% if session.user_id == creator_id %}
+                <button class="add-member-btn" onclick="toggleAddMemberForm()">Add Member</button>
+                <form id="add-member-form" style="display: none;">
+                    <input type="hidden" id="add-group-id" value="{{ group_id }}">
+                    <select id="add-username" required>
+                        <option value="" disabled selected>Select a friend</option>
+                    </select>
+                    <button type="button" onclick="submitAddToGroup()">Add</button>
+                    <button type="button" onclick="toggleAddMemberForm()">Cancel</button>
+                </form>
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        fetchFriendsForAddMember("{{ group_id }}");
+                    });
+                </script>
+            {% endif %}
+            <p class="members">Members: {{ members | join(', ') }}</p>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeChat("{{ session.user_id | tojson }}", null, true, "{{ group_id | tojson }}", "{{ last_message_id }}", '{{ session.username | tojson }}');
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        });
+    </script>
 </body>
 </html>

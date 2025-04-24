@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SomeMsger - Create Group</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/script.js"></script>
+</head>
+<body class="group-create">
+    <header>
+        <div class="logo">SomeMsger</div>
+        <nav>
+            <a href="/chats">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+            </a>
+            <a href="/groups" class="active">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+            </a>
+            <a href="/settings/profile">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 12a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8zm7-7a4 4 0 1 1 8 0"/>
+                </svg>
+            </a>
+            <a href="/search">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+            </a>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="main">
+            <h2>CREATE GROUP</h2>
+            <form id="group-form" onsubmit="submitCreateGroup(); return false;">
+                <input type="text" name="group_name" placeholder="GROUP NAME" required>
+                <label>Select Friends:</label>
+                {% for friend in friends %}
+                    <div>
+                        <input type="checkbox" name="usernames" value="{{ friend }}"> {{ friend }}
+                    </div>
+                {% endfor %}
+                <button type="submit">CREATE</button>
+            </form>
+            <p><a href="/groups">Back to Groups</a></p>
+        </div>
+    </div>
+</body>
+</html>

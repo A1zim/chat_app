@@ -7,15 +7,19 @@
     <link rel="stylesheet" href="/static/styles.css">
     <script src="/static/script.js"></script>
 </head>
-<body>
+<body class="search">
     <header>
         <div class="logo">SomeMsger</div>
         <nav>
-            <a href="/chats">Back to Chats</a>
+            <a href="/chats">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+            </a>
         </nav>
     </header>
-    <div class="main">
-        <div class="search-container">
+    <div class="container">
+        <div class="main">
             <h2>Search Users</h2>
             <input type="text" id="search-input" placeholder="Enter nickname..." oninput="searchUsers()">
             <div id="suggestions" class="suggestions"></div>

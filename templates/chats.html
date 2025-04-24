@@ -4,33 +4,213 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SomeMsger - Chats</title>
-    <link rel="stylesheet" href="/static/styles.css">
     <script src="/static/script.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f0f0f0;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        nav {
+            display: flex;
+            gap: 15px;
+        }
+        nav a {
+            color: #6C757D;
+            text-decoration: none;
+        }
+        nav a:hover {
+            color: #333;
+        }
+        nav svg {
+            width: 16px;
+            height: 16px;
+        }
+        .container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 60px);
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #fff;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+            text-decoration: none;
+            background-color: transparent;
+        }
+        .tab.active {
+            background-color: #D3D3D3;
+        }
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+        }
+        .avatar {
+            width: 30px;
+            height: 30px;
+            background-color: #ccc;
+            border-radius: 50%;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .avatar svg {
+            width: 20px;
+            height: 20px;
+            color: #fff;
+        }
+        .chat-info {
+            flex: 1;
+        }
+        .chat-name {
+            font-size: 16px;
+        }
+        .pending-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            color: #333;
+        }
+        .pending-item svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+        }
+        .pending-item span {
+            flex: 1;
+            font-size: 16px;
+        }
+        .pending-item button {
+            padding: 5px 10px;
+            background-color: #1E90FF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .pending-item button:hover {
+            background-color: #1c87e6;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+        .sidebar-link svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+        }
+        .main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff;
+        }
+        .main p {
+            font-size: 16px;
+            color: #6C757D;
+        }
+    </style>
 </head>
 <body>
     <header>
         <div class="logo">SomeMsger</div>
         <nav>
-            <a href="/search">*search*</a>
+            <a href="/chats">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+            </a>
+            <a href="/settings/profile">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 12a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8zm7-7a4 4 0 1 1 8 0"/>
+                </svg>
+            </a>
         </nav>
     </header>
     <div class="container">
         <div class="sidebar">
-            <h3>Friends</h3>
-            {% for friend in friends %}
-                <div class="item">
-                    <img src="https://via.placeholder.com/30" alt="Avatar">
-                    <a href="/chats/{{ friend }}">{{ friend }}</a>
-                </div>
-            {% endfor %}
-            <h3>Pending Requests</h3>
-            {% for request in pending_requests %}
-                <div class="item">
-                    <img src="https://via.placeholder.com/30" alt="Avatar">
-                    <span>{{ request }}</span>
-                    <button onclick="acceptFriendRequest('{{ request }}')">Accept</button>
-                </div>
-            {% endfor %}
+            <div class="tabs">
+                <a href="/chats" class="tab active">Chats</a>
+                <a href="/groups" class="tab">Groups</a>
+            </div>
+            <div class="chat-list">
+                {% for friend in friends %}
+                    <a href="/chats/{{ friend }}" class="chat-item">
+                        <div class="avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="chat-info">
+                            <span class="chat-name">{{ friend }}</span>
+                        </div>
+                    </a>
+                {% endfor %}
+                <h3 style="padding: 10px; font-size: 16px;">Pending Requests</h3>
+                {% for request in pending_requests %}
+                    <div class="pending-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <span>{{ request }}</span>
+                        <button onclick="acceptFriendRequest('{{ request }}')">Accept</button>
+                    </div>
+                {% endfor %}
+            </div>
+            <a href="/logout" class="sidebar-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                </svg>
+                Logout
+            </a>
         </div>
         <div class="main">
             <p>Select a friend to start chatting.</p>
