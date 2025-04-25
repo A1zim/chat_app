@@ -7,38 +7,58 @@
     <link rel="stylesheet" href="/static/styles.css">
     <script src="/static/script.js"></script>
 </head>
-<body>
+<body class="settings">
     <header>
         <div class="logo">SomeMsger</div>
-        <nav>
-            <a href="/chats">Chats</a>
-            <a href="/groups">Groups</a>
-            <a href="/settings/profile" class="active">Settings</a>
-            <a href="/search">*search*</a>
-        </nav>
     </header>
-    <div class="container">
+    <div class="app-container">
         <div class="sidebar">
-            <h3>Settings</h3>
-            <a href="/settings/profile" class="sidebar-link">Profile</a>
-            <a href="/settings/styles" class="sidebar-link active">Styles</a>
-            <a href="/settings/account" class="sidebar-link">Account</a>
-            <a href="/logout" class="sidebar-link">
-                <span style="display: inline-flex; align-items: center;">
-                    <svg style="margin-right: 5px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
-                    </svg>
-                    Logout
-                </span>
-            </a>
+            <div class="chat-list">
+                <a href="/settings/profile" class="chat-item">
+                    <div class="avatar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <div class="chat-info">
+                        <span class="chat-name">Profile</span>
+                    </div>
+                </a>
+                <a href="/settings/styles" class="chat-item active">
+                    <div class="avatar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2a10 10 0 0 0-7.35 16.83M12 2a10 10 0 0 1 7.35 16.83M12 2v4M12 18v4M2 12h4M18 12h4"/>
+                        </svg>
+                    </div>
+                    <div class="chat-info">
+                        <span class="chat-name">Styles</span>
+                    </div>
+                </a>
+                <a href="/settings/account" class="chat-item">
+                    <div class="avatar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="8.5" cy="7" r="4"/>
+                            <path d="M20 8v6M23 11h-6"/>
+                        </svg>
+                    </div>
+                    <div class="chat-info">
+                        <span class="chat-name">Account</span>
+                    </div>
+                </a>
+            </div>
+            <a href="/chats" class="back-button">Back to chats</a>
         </div>
-        <div class="main">
-            <div class="settings-section">
+        <div class="chat-container">
+            <header class="chat-header">
                 <h2>Style Settings</h2>
+            </header>
+            <div class="settings-section">
                 <p>Customize the appearance of SomeMsger (coming soon).</p>
                 <!-- Placeholder for future style options -->
             </div>
         </div>
     </div>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9360b68baf8153db',t:'MTc0NTYxNDIzMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

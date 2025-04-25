@@ -11,7 +11,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Replace with a secure key
+app.secret_key = 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f'
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 socketio = SocketIO(app, cors_allowed_origins="*", manage_session=False)
 
@@ -338,22 +338,23 @@ def groups():
     conn.close()
     return render_template('groups.html', groups=groups, friends=friend_list)
 
-@app.route('/groups/<group>')
-def group_chat(group):
+@app.route('/group/<group_id>')
+def group_chat(group_id):
     if 'user_id' not in session:
         return redirect(url_for('login'))
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
-    c.execute("SELECT id, creator_id FROM groups WHERE name = ?", (group,))
+    c.execute("SELECT id, name, creator_id FROM groups WHERE id = ?", (group_id,))
     group_data = c.fetchone()
     if not group_data:
         conn.close()
         return redirect(url_for('groups'))
-    c.execute("SELECT m.*, u.username FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.is_group = 1 AND m.group_id = ?", (group_data[0],))
+    group_id, group_name, creator_id = group_data
+    c.execute("SELECT m.*, u.username FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.is_group = 1 AND m.group_id = ?", (group_id,))
     messages = c.fetchall()
     c.execute("SELECT g.id, g.name FROM groups g JOIN group_members gm ON g.id = gm.group_id WHERE gm.user_id = ?", (session['user_id'],))
     groups = c.fetchall()
-    c.execute("SELECT u.username FROM users u JOIN group_members gm ON u.id = gm.user_id WHERE gm.group_id = ?", (group_data[0],))
+    c.execute("SELECT u.username FROM users u JOIN group_members gm ON u.id = gm.user_id WHERE gm.group_id = ?", (group_id,))
     members = c.fetchall()
     c.execute("SELECT friend_id FROM friends WHERE user_id = ? AND status = 'accepted'", (session['user_id'],))
     friends = c.fetchall()
@@ -362,7 +363,7 @@ def group_chat(group):
         c.execute("SELECT username FROM users WHERE id = ?", (friend[0],))
         friend_list.append(c.fetchone()[0])
     conn.close()
-    return render_template('group_chat.html', group=group, messages=messages, group_id=group_data[0], groups=groups, members=[m[0] for m in members], creator_id=group_data[1], session=session, friends=friend_list)
+    return render_template('group_chat.html', group=group_name, messages=messages, group_id=group_id, groups=groups, members=[m[0] for m in members], creator_id=creator_id, session=session, friends=friend_list)
 
 @app.route('/groups/create')
 def group_create():
@@ -402,7 +403,7 @@ def create_group():
                 c.execute("INSERT INTO group_members (group_id, user_id) VALUES (?, ?)", (group_id, user[0]))
         conn.commit()
         conn.close()
-        return jsonify({'status': 'success', 'group_name': group_name})
+        return jsonify({'status': 'success', 'group_id': group_id})
     except sqlite3.IntegrityError:
         conn.close()
         return jsonify({'error': 'Group name already exists'}), 400
@@ -632,12 +633,10 @@ def send_message_http():
             conn.commit()
             room = f"group_{group_id}"
             c.execute("SELECT username FROM users WHERE id = ?", (session['user_id'],))
-            sender_username = c.fetchone()[0]
-            print(f"HTTP send_message: Broadcasting group message id={message_id}, room={room}, sender={sender_username}, content={content}")
+            print(f"HTTP send_message: Broadcasting group message id={message_id}, room={room}, content={content}")
             socketio.emit('new_message', {
                 'id': message_id,
                 'sender_id': session['user_id'],
-                'sender_username': sender_username,
                 'content': content,
                 'timestamp': timestamp,
                 'is_group': True
@@ -658,12 +657,10 @@ def send_message_http():
             conn.commit()
             room = f"chat_{min(session['user_id'], receiver[0])}_{max(session['user_id'], receiver[0])}"
             c.execute("SELECT username FROM users WHERE id = ?", (session['user_id'],))
-            sender_username = c.fetchone()[0]
-            print(f"HTTP send_message: Broadcasting user message id={message_id}, room={room}, sender={sender_username}, content={content}")
+            print(f"HTTP send_message: Broadcasting user message id={message_id}, room={room}, content={content}")
             socketio.emit('new_message', {
                 'id': message_id,
                 'sender_id': session['user_id'],
-                'sender_username': sender_username,
                 'content': content,
                 'timestamp': timestamp,
                 'is_group': False
@@ -707,7 +704,6 @@ def get_new_messages():
             {
                 'id': m[0],
                 'sender_id': m[1],
-                'sender_username': m[8],
                 'content': m[3],
                 'timestamp': m[4],
                 'is_group': bool(m[5])
@@ -786,12 +782,10 @@ def handle_send_message(data):
             conn.commit()
             room = f"group_{group_id}"
             c.execute("SELECT username FROM users WHERE id = ?", (user_id,))
-            sender_username = c.fetchone()[0]
-            print(f"send_message: Broadcasting group message id={message_id}, room={room}, sender={sender_username}, content={content}")
+            print(f"send_message: Broadcasting group message id={message_id}, room={room}, content={content}")
             emit('new_message', {
                 'id': message_id,
                 'sender_id': user_id,
-                'sender_username': sender_username,
                 'content': content,
                 'timestamp': timestamp,
                 'is_group': True
@@ -811,12 +805,10 @@ def handle_send_message(data):
                 conn.commit()
                 room = f"chat_{min(user_id, receiver[0])}_{max(user_id, receiver[0])}"
                 c.execute("SELECT username FROM users WHERE id = ?", (user_id,))
-                sender_username = c.fetchone()[0]
-                print(f"send_message: Broadcasting user message id={message_id}, room={room}, sender={sender_username}, content={content}")
+                print(f"send_message: Broadcasting user message id={message_id}, room={room}, content={content}")
                 emit('new_message', {
                     'id': message_id,
                     'sender_id': user_id,
-                    'sender_username': sender_username,
                     'content': content,
                     'timestamp': timestamp,
                     'is_group': False

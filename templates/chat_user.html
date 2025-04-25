@@ -4,234 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SomeMsger - Chat with {{ username }}</title>
+    <link rel="stylesheet" href="/static/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
     <script src="/static/script.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        body {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background-color: #f0f0f0;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: #fff;
-            border-bottom: 1px solid #ddd;
-        }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-        nav {
-            display: flex;
-            gap: 15px;
-        }
-        nav a {
-            color: #6C757D;
-            text-decoration: none;
-        }
-        nav a:hover {
-            color: #333;
-        }
-        nav svg {
-            width: 16px;
-            height: 16px;
-        }
-        .app-container {
-            display: flex;
-            flex: 1;
-            height: calc(100vh - 60px);
-        }
-        .sidebar {
-            width: 250px;
-            background-color: #fff;
-            border-right: 1px solid #ddd;
-            display: flex;
-            flex-direction: column;
-        }
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid #ddd;
-        }
-        .tab {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            font-size: 16px;
-            color: #333;
-            text-decoration: none;
-            background-color: transparent;
-        }
-        .tab.active {
-            background-color: #D3D3D3;
-        }
-        .chat-list {
-            flex: 1;
-            overflow-y: auto;
-        }
-        .chat-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            text-decoration: none;
-            color: #333;
-            position: relative;
-        }
-        .chat-item.active {
-            background-color: #D3D3D3;
-        }
-        .avatar {
-            width: 30px;
-            height: 30px;
-            background-color: #ccc;
-            border-radius: 50%;
-            margin-right: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .avatar svg {
-            width: 20px;
-            height: 20px;
-            color: #fff;
-        }
-        .online-dot {
-            position: absolute;
-            left: 30px;
-            bottom: 15px;
-            width: 10px;
-            height: 10px;
-            background-color: #28a745;
-            border-radius: 50%;
-            border: 2px solid #fff;
-        }
-        .chat-info {
-            flex: 1;
-        }
-        .chat-name {
-            font-size: 16px;
-        }
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            color: #333;
-            text-decoration: none;
-        }
-        .sidebar-link svg {
-            width: 16px;
-            height: 16px;
-            margin-right: 10px;
-        }
-        .chat-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .chat-header {
-            padding: 10px 20px;
-            background-color: #D3D3D3;
-            border-bottom: 1px solid #ddd;
-        }
-        .chat-header h2 {
-            font-size: 18px;
-            color: #333;
-        }
-        .messages {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            background-color: #fff;
-        }
-        .message {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 10px;
-        }
-        .message.sent {
-            align-items: flex-end;
-        }
-        .message.received {
-            align-items: flex-start;
-        }
-        .bubble {
-            max-width: 60%;
-            padding: 10px;
-            border-radius: 10px;
-            position: relative;
-        }
-        .message.sent .bubble {
-            background-color: #E6F0FA;
-        }
-        .message.received .bubble {
-            background-color: #F8F9FA;
-        }
-        .sender {
-            font-size: 12px;
-            color: #6C757D;
-            margin-bottom: 5px;
-        }
-        .content {
-            font-size: 14px;
-        }
-        .timestamp {
-            font-size: 12px;
-            color: #6C757D;
-            margin-top: 5px;
-        }
-        .message-form {
-            display: flex;
-            padding: 10px;
-            background-color: #fff;
-            border-top: 1px solid #ddd;
-        }
-        .message-form input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-            margin-right: 10px;
-            font-size: 14px;
-        }
-        .message-form button {
-            padding: 10px 20px;
-            background-color: #1E90FF;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .message-form button:hover {
-            background-color: #1c87e6;
-        }
-    </style>
 </head>
-<body>
+<body class="chats">
     <header>
         <div class="logo">SomeMsger</div>
-        <nav>
-            <a href="/chats">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
-            </a>
-            <a href="/settings/profile">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 12a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8zm7-7a4 4 0 1 1 8 0"/>
-                </svg>
-            </a>
-        </nav>
     </header>
     <div class="app-container">
         <div class="sidebar">
@@ -240,6 +19,19 @@
                 <a href="/groups" class="tab">Groups</a>
             </div>
             <div class="chat-list">
+                <a href="/search" class="chat-item">
+                    <div class="avatar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="8.5" cy="7" r="4"/>
+                            <line x1="20" y1="8" x2="20" y2="14"/>
+                            <line x1="23" y1="11" x2="17" y2="11"/>
+                        </svg>
+                    </div>
+                    <div class="chat-info">
+                        <span class="chat-name">Add friend</span>
+                    </div>
+                </a>
                 {% for friend in friends %}
                     <a href="/chats/{{ friend }}" class="chat-item {{ 'active' if friend == username }}">
                         <div class="avatar">
@@ -258,8 +50,9 @@
                 {% endfor %}
             </div>
             <a href="/settings/profile" class="sidebar-link">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 12a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8zm7-7a4 4 0 1 1 8 0"/>
+                <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l-.06-.06a1.65 1.65 0 0 0 1.82.33h-.09A1.65 1.65 0 0 0 10 3.09V3a2 2 0 0 1 4 0v-.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l-.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                 </svg>
                 Settings
             </a>
@@ -298,9 +91,12 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initializeChat("{{ session.user_id | tojson }}", "{{ username | tojson }}", false, null, "{{ last_message_id }}", "{{ session.username | tojson }}");
-            const messagesDiv = document.getElementById('messages');
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            // Use setTimeout to ensure messages are rendered before scrolling
+            setTimeout(() => {
+                const messagesDiv = document.getElementById('messages');
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }, 100); // 100ms delay to allow rendering
         });
     </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9360a70a9bde678c',t:'MTc0NTYxMzU5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

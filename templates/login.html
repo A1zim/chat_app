@@ -58,7 +58,6 @@
         }
         input::placeholder {
             color: #6c757d;
-            text-transform: uppercase;
         }
         .forgot-password {
             display: block;
@@ -89,12 +88,11 @@
         p {
             margin-top: 20px;
             color: #1E90FF;
-            font-size: 14px;
+            font-size: 16px;
         }
         p a {
             color: #1E90FF;
             text-decoration: none;
-            text-transform: uppercase;
         }
         p a:hover {
             text-decoration: underline;
@@ -104,17 +102,17 @@
 <body>
     <div class="logo">SomeMsger</div>
     <div class="form-container">
-        <h2>LOGGING IN</h2>
+        <h2>Login</h2>
         {% if error %}
             <p class="error">{{ error }}</p>
         {% endif %}
         <form method="POST" action="/login">
-            <input type="text" name="username_or_email" placeholder="NICKNAME OR EMAIL" required>
-            <input type="password" name="password" placeholder="PASSWORD" required>
+            <input type="text" name="username_or_email" placeholder="Username or Email" required>
+            <input type="password" name="password" placeholder="Password" required>
             <a href="/forgot_password" class="forgot-password">Forgot password?</a>
-            <button type="submit">LOGIN</button>
+            <button type="submit">Login</button>
         </form>
-        <p>HAVEN'T REGISTERED YET? <a href="/register">REGISTER</a></p>
+        <p><a href="/register">Don't have an account? Register</a></p>
     </div>
 </body>
 </html>

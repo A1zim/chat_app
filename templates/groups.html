@@ -4,168 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SomeMsger - Groups</title>
+    <link rel="stylesheet" href="/static/styles.css">
     <script src="/static/script.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        body {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background-color: #f0f0f0;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: #fff;
-            border-bottom: 1px solid #ddd;
-        }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-        nav {
-            display: flex;
-            gap: 15px;
-        }
-        nav a {
-            color: #6C757D;
-            text-decoration: none;
-        }
-        nav a:hover {
-            color: #333;
-        }
-        nav svg {
-            width: 16px;
-            height: 16px;
-        }
-        .container {
-            display: flex;
-            flex: 1;
-            height: calc(100vh - 60px);
-        }
-        .sidebar {
-            width: 250px;
-            background-color: #fff;
-            border-right: 1px solid #ddd;
-            display: flex;
-            flex-direction: column;
-        }
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid #ddd;
-        }
-        .tab {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            font-size: 16px;
-            color: #333;
-            text-decoration: none;
-            background-color: transparent;
-        }
-        .tab.active {
-            background-color: #D3D3D3;
-        }
-        .chat-list {
-            flex: 1;
-            overflow-y: auto;
-        }
-        .chat-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            text-decoration: none;
-            color: #333;
-        }
-        .avatar {
-            width: 30px;
-            height: 30px;
-            background-color: #ccc;
-            border-radius: 50%;
-            margin-right: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .avatar svg {
-            width: 20px;
-            height: 20px;
-            color: #fff;
-        }
-        .chat-info {
-            flex: 1;
-        }
-        .chat-name {
-            font-size: 16px;
-        }
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            color: #333;
-            text-decoration: none;
-        }
-        .sidebar-link svg {
-            width: 16px;
-            height: 16px;
-            margin-right: 10px;
-        }
-        .main {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #fff;
-        }
-        .main p {
-            font-size: 16px;
-            color: #6C757D;
-        }
-    </style>
 </head>
-<body>
+<body class="groups">
     <header>
         <div class="logo">SomeMsger</div>
-        <nav>
-            <a href="/chats">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
-            </a>
-            <a href="/settings/profile">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 12a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8zm7-7a4 4 0 1 1 8 0"/>
-                </svg>
-            </a>
-        </nav>
     </header>
-    <div class="container">
+    <div class="app-container">
         <div class="sidebar">
             <div class="tabs">
                 <a href="/chats" class="tab">Chats</a>
                 <a href="/groups" class="tab active">Groups</a>
             </div>
             <div class="chat-list">
-                {% for group in groups %}
-                    <a href="/groups/{{ group[1] }}" class="chat-item">
-                        <div class="avatar">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
-                            </svg>
-                        </div>
-                        <div class="chat-info">
-                            <span class="chat-name">{{ group[1] }}</span>
-                        </div>
-                    </a>
-                {% endfor %}
                 <a href="/groups/create" class="chat-item">
                     <div class="avatar">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -176,7 +28,26 @@
                         <span class="chat-name">Create New Group</span>
                     </div>
                 </a>
+                {% for group in groups %}
+                    <a href="/group/{{ group[0] }}" class="chat-item">
+                        <div class="avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                        <div class="chat-info">
+                            <span class="chat-name">{{ group[1] }}</span>
+                        </div>
+                    </a>
+                {% endfor %}
             </div>
+            <a href="/settings/profile" class="sidebar-link">
+                <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h-.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l-.06-.06a1.65 1.65 0 0 0 1.82.33h-.09A1.65 1.65 0 0 0 10 3.09V3a2 2 0 0 1 4 0v-.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l-.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                Settings
+            </a>
             <a href="/logout" class="sidebar-link">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
@@ -184,9 +55,18 @@
                 Logout
             </a>
         </div>
-        <div class="main">
-            <p>Select a group to start chatting or create a new one.</p>
+        <div class="chat-container">
+            <header class="chat-header">
+                <h2> </h2>
+            </header>
+            <div class="messages" id="messages">
+                <!-- Empty chat area -->
+            </div>
+            <form class="message-form">
+                <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off" disabled>
+                <button type="submit" disabled>Send</button>
+            </form>
         </div>
     </div>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9360a7097fa96783',t:'MTc0NTYxMzU5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

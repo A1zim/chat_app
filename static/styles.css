@@ -28,7 +28,8 @@ body {
 }
 
 .chat-item {
-    display: block;
+    display: flex; /* Changed to flex to align avatar and name in a row */
+    align-items: center; /* Vertically center the avatar and name */
     padding: 10px;
     text-decoration: none;
     color: #000;
@@ -42,7 +43,8 @@ body {
 
 .chat-info {
     display: flex;
-    flex-direction: column;
+    flex-direction: row; /* Changed from column to row */
+    align-items: center; /* Ensure the name is vertically centered with the avatar */
 }
 
 .chat-name {
@@ -59,6 +61,8 @@ body {
 }
 
 .sidebar-link svg {
+    width: 12px;
+    height: 12px;
     margin-right: 8px;
 }
 
@@ -766,4 +770,128 @@ body.reset-password button {
 
 body.reset-password button:hover {
     background-color: #333;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #ced4da;
+}
+
+.tab {
+    flex: 1;
+    padding: 8px;
+    text-align: center;
+    font-size: 14px;
+    color: #000;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.tab.active {
+    background-color: #ced4da;
+}
+
+.avatar {
+    width: 24px;
+    height: 24px;
+    background-color: #ccc;
+    border-radius: 50%;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar svg {
+    width: 16px;
+    height: 16px;
+    color: #fff;
+}
+
+.online-dot {
+    position: absolute;
+    left: 30px;
+    bottom: 15px;
+    width: 10px;
+    height: 10px;
+    background-color: #28a745;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+.add-member-btn {
+    margin: 10px;
+    padding: 10px;
+    background-color: #6c757d;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-member-btn:hover {
+    background-color: #5a6268;
+}
+
+.members {
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+#add-member-form button:last-of-type {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+#add-member-form button:last-of-type:hover {
+    background-color: #5a6268;
+}
+
+.pending-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    color: #000;
+}
+
+.pending-item svg {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+}
+
+.pending-item span {
+    flex: 1;
+    font-size: 16px;
+}
+
+.pending-item button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pending-item button:hover {
+    background-color: #0056b3;
+}
+
+.submit-button {
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+}
+
+body.settings .chat-container .settings-section {
+    margin-left: 30px;
 }

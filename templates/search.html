@@ -10,19 +10,25 @@
 <body class="search">
     <header>
         <div class="logo">SomeMsger</div>
-        <nav>
-            <a href="/chats">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
-            </a>
-        </nav>
+        
     </header>
     <div class="container">
         <div class="main">
-            <h2>Search Users</h2>
+            <a href="/chats">Back to Chats</a>
+            <h2>Add Friend</h2>
             <input type="text" id="search-input" placeholder="Enter nickname..." oninput="searchUsers()">
             <div id="suggestions" class="suggestions"></div>
+            <h3 style="padding: 10px; font-size: 16px;">Pending Requests</h3>
+            {% for request in pending_requests %}
+                <div class="pending-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <span>{{ request }}</span>
+                    <button onclick="acceptFriendRequest('{{ request }}')">Accept</button>
+                </div>
+            {% endfor %}
         </div>
     </div>
 </body>
