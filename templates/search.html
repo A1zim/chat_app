@@ -10,25 +10,32 @@
 <body class="search">
     <header>
         <div class="logo">SomeMsger</div>
-        
     </header>
     <div class="container">
         <div class="main">
-            <a href="/chats">Back to Chats</a>
+            <div class="back-link">
+                <a href="/chats">Back to Chats</a>
+            </div>
             <h2>Add Friend</h2>
             <input type="text" id="search-input" placeholder="Enter nickname..." oninput="searchUsers()">
             <div id="suggestions" class="suggestions"></div>
-            <h3 style="padding: 10px; font-size: 16px;">Pending Requests</h3>
-            {% for request in pending_requests %}
-                <div class="pending-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                        <circle cx="12" cy="7" r="4"/>
-                    </svg>
-                    <span>{{ request }}</span>
-                    <button onclick="acceptFriendRequest('{{ request }}')">Accept</button>
-                </div>
-            {% endfor %}
+            <div class="pending-requests">
+                <h3>Pending Requests</h3>
+                {% if pending_requests %}
+                    {% for request in pending_requests %}
+                        <div class="pending-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            <span>{{ request }}</span>
+                            <button onclick="acceptFriendRequest('{{ request }}')">Accept</button>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-pending-message">No pending friend requests.</p>
+                {% endif %}
+            </div>
         </div>
     </div>
 </body>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SomeMsger - Style Settings</title>
+    <title>SomeMsger - Styles Settings</title>
     <link rel="stylesheet" href="/static/styles.css">
     <script src="/static/script.js"></script>
 </head>
@@ -48,17 +48,56 @@
                     </div>
                 </a>
             </div>
-            <a href="/chats" class="back-button">Back to chats</a>
+            <a href="/chats" class="sidebar-link">Back to chats</a>
+            <a href="/logout" class="sidebar-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+                </svg>
+                Logout
+            </a>
         </div>
         <div class="chat-container">
             <header class="chat-header">
-                <h2>Style Settings</h2>
+                <h2>Styles Settings</h2>
             </header>
             <div class="settings-section">
-                <p>Customize the appearance of SomeMsger (coming soon).</p>
-                <!-- Placeholder for future style options -->
+                <p>
+                    <strong>Theme:</strong>
+                    <select id="theme-select">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                </p>
+                <p>
+                    <strong>Font Size:</strong>
+                    <select id="font-size-select">
+                        <option value="small">Small</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="large">Large</option>
+                    </select>
+                </p>
+                <button class="submit-button" onclick="updateStyles()">Save Styles</button>
             </div>
         </div>
     </div>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9360b68baf8153db',t:'MTc0NTYxNDIzMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    <script>
+        // Load current styles when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCurrentStyles();
+        });
+
+        function loadCurrentStyles() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedFontSize = localStorage.getItem('fontSize') || 'medium';
+
+            // Apply saved theme and size by setting data attributes
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.documentElement.setAttribute('data-size', savedFontSize);
+
+            // Update UI indicators
+            document.getElementById('theme-select').value = savedTheme;
+            document.getElementById('font-size-select').value = savedFontSize;
+        }
+    </script>
+</body>
 </html>

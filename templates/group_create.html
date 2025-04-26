@@ -13,18 +13,24 @@
     </header>
     <div class="container">
         <div class="main">
-            <h2>CREATE GROUP</h2>
+            <h2>Create Group</h2>
             <form id="group-form" onsubmit="submitCreateGroup(); return false;">
-                <input type="text" name="group_name" placeholder="GROUP NAME" required>
-                <label>Select Friends:</label>
-                {% for friend in friends %}
-                    <div>
-                        <input type="checkbox" name="usernames" value="{{ friend }}"> {{ friend }}
-                    </div>
-                {% endfor %}
-                <button type="submit">CREATE</button>
+                <label for="group_name">Group Name</label>
+                <input type="text" id="group_name" name="group_name" placeholder="Enter group name" required>
+                <label for="description">Description</label>
+                <textarea id="description" name="description" placeholder="Enter group description" rows="4"></textarea>
+                <label>Select Friends</label>
+                <div class="friend-list">
+                    {% for friend in friends %}
+                        <div class="friend-item">
+                            <input type="checkbox" id="friend_{{ friend }}" name="usernames" value="{{ friend }}">
+                            <label for="friend_{{ friend }}">{{ friend }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="submit-button">Create Group</button>
             </form>
-            <p><a href="/groups">Back to Groups</a></p>
+            <p class="back-link"><a href="/groups">Back to Groups</a></p>
         </div>
     </div>
 </body>
