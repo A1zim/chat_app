@@ -1568,3 +1568,62 @@ header {
     font-size: var(--font-size-large);
     font-weight: bold;
 }
+
+/* styles.css */
+.interest-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.interest-item button {
+    background-color: var(--remove-button-bg);
+    color: var(--button-text);
+    border: none;
+    padding: 2px 8px;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+}
+
+.interest-item button:hover {
+    background-color: var(--remove-button-hover-bg);
+}
+
+.recommendations-section {
+    margin-top: 20px;
+}
+
+.recommendations-section h3 {
+    font-size: var(--font-size-heading);
+    margin-bottom: 10px;
+}
+
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: var(--suggestion-item-bg);
+    border: 1px solid var(--suggestion-item-border);
+    border-radius: var(--border-radius);
+    margin-bottom: 5px;
+    color: var(--suggestion-item-text);
+}
+
+.suggestion-item:hover {
+    background-color: var(--suggestion-item-hover-bg);
+}
+
+.suggestion-item button {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+}
+
+.suggestion-item button:hover {
+    background-color: var(--button-hover-bg);
+}

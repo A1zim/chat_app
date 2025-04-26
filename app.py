@@ -1,3 +1,4 @@
+import json
 import eventlet
 eventlet.monkey_patch()
 
@@ -19,6 +20,15 @@ logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__)
 app.secret_key = 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f'
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+def safe_from_json(value):
+    if value is None:
+        return []
+    try:
+        return json.loads(value)
+    except json.JSONDecodeError:
+        return []
+
+app.jinja_env.filters['from_json'] = safe_from_json
 socketio = SocketIO(app, cors_allowed_origins="*", manage_session=False, async_mode='eventlet', logger=True, engineio_logger=True)
 
 SENDER_EMAIL = "azimiwenbaev@gmail.com"
@@ -27,6 +37,8 @@ SENDER_APP_PASSWORD = "ghzhuqjdysngqwmm"
 def init_db():
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
+    
+    # Create tables
     c.execute('''CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email TEXT UNIQUE NOT NULL,
@@ -79,11 +91,30 @@ def init_db():
         token TEXT,
         timestamp TEXT
     )''')
+
+    # Convert existing interests to JSON array format
+    c.execute("SELECT id, interests FROM users WHERE interests IS NOT NULL")
+    users = c.fetchall()
+    for user_id, interests in users:
+        # Skip if already in JSON array format
+        if interests.startswith('[') and interests.endswith(']'):
+            continue
+        # Convert string to array, splitting by comma if necessary
+        if interests:
+            interest_list = [i.strip().replace(' ', '') for i in interests.split(',')]
+            interest_json = json.dumps(interest_list)
+        else:
+            interest_json = json.dumps([])
+        c.execute("UPDATE users SET interests = ? WHERE id = ?", (interest_json, user_id))
+
+    # Check and add 'description' column to groups table if missing
     c.execute("PRAGMA table_info(groups)")
     columns = [col[1] for col in c.fetchall()]
     if 'description' not in columns:
         c.execute("ALTER TABLE groups ADD COLUMN description TEXT")
         logging.info("Added missing 'description' column to groups table")
+
+    # Commit all changes and close the connection
     conn.commit()
     conn.close()
 
@@ -464,6 +495,7 @@ def get_user_info():
     conn.close()
     if not user:
         return jsonify({'status': 'error', 'error': 'User not found'}), 404
+    interests = json.loads(user[4]) if user[4] else []
     return jsonify({
         'status': 'success',
         'user': {
@@ -471,7 +503,7 @@ def get_user_info():
             'name': user[1] or '',
             'surname': user[2] or '',
             'age': user[3] if user[3] is not None else '',
-            'interests': user[4] or '',
+            'interests': interests,
             'username': username
         }
     })
@@ -801,11 +833,15 @@ def update_profile():
     name = request.form['name']
     surname = request.form['surname']
     age = request.form['age']
-    interests = request.form['interests']
+    interests = request.form['interests']  # This is a JSON string
+    interests_array = json.loads(interests)  # Parse to list
+    # Remove spaces from interests and validate
+    interests_array = [interest.strip().replace(' ', '') for interest in interests_array]
+    interests_json = json.dumps(interests_array)  # Convert back to JSON string for storage
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
     c.execute("UPDATE users SET name = ?, surname = ?, age = ?, interests = ? WHERE id = ?",
-              (name, surname, age, interests, session['user_id']))
+              (name, surname, age, interests_json, session['user_id']))
     conn.commit()
     conn.close()
     return jsonify({'status': 'success'})
@@ -859,21 +895,52 @@ def change_password():
 def search():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    # Fetch pending friend requests
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
+    # Fetch pending friend requests
     c.execute("SELECT user_id FROM friends WHERE friend_id = ? AND status = 'pending'", (session['user_id'],))
     pending_requests = c.fetchall()
     pending_list = []
     for req in pending_requests:
         c.execute("SELECT username FROM users WHERE id = ?", (req[0],))
         pending_list.append(c.fetchone()[0])
-    conn.close()
+    
+    # Fetch current user's interests
+    c.execute("SELECT interests FROM users WHERE id = ?", (session['user_id'],))
+    user_interests = json.loads(c.fetchone()[0] or '[]')
+    
+    recommendations = []
+    if request.method == 'GET' and user_interests:
+        # Fetch all users except the current user
+        c.execute("SELECT id, username, interests FROM users WHERE id != ?", (session['user_id'],))
+        all_users = c.fetchall()
+        
+        # Get IDs of friends and pending requests to exclude them
+        c.execute("SELECT friend_id FROM friends WHERE user_id = ? AND status IN ('accepted', 'pending')", (session['user_id'],))
+        exclude_ids = set(f[0] for f in c.fetchall())
+        c.execute("SELECT user_id FROM friends WHERE friend_id = ? AND status = 'pending'", (session['user_id'],))
+        exclude_ids.update(f[0] for f in c.fetchall())
+        
+        # Find users with overlapping interests
+        potential_recommendations = []
+        for user_id, username, interests_json in all_users:
+            if user_id in exclude_ids:
+                continue
+            interests = json.loads(interests_json or '[]')
+            common_interests = set(user_interests).intersection(interests)
+            if common_interests:
+                potential_recommendations.append({
+                    'user_id': user_id,
+                    'username': username,
+                    'common_interests_count': len(common_interests)
+                })
+        
+        # Sort by number of common interests (descending) and limit to 10
+        potential_recommendations.sort(key=lambda x: x['common_interests_count'], reverse=True)
+        recommendations = potential_recommendations[:10]
     
     if request.method == 'POST':
         query = request.form.get('query', '').lower()
-        conn = sqlite3.connect('database.db')
-        c = conn.cursor()
         # Fetch users matching the query
         c.execute("SELECT id, username FROM users WHERE username LIKE ? AND id != ?",
                   (f'%{query}%', session['user_id']))
@@ -898,7 +965,9 @@ def search():
             })
         conn.close()
         return jsonify({'users': user_list})
-    return render_template('search.html', pending_requests=pending_list)
+    
+    conn.close()
+    return render_template('search.html', pending_requests=pending_list, recommendations=recommendations)
 
 @app.route('/send_friend_request', methods=['POST'])
 def send_friend_request():

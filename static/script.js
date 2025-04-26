@@ -460,12 +460,15 @@ async function showInfoModal() {
             console.log('get_user_info response data:', data);
             if (data.status === 'success') {
                 const user = data.user;
+                const interestsList = user.interests && user.interests.length
+                    ? user.interests.map(i => `#${i}`).join('<br>')
+                    : 'None';
                 modal.querySelector('.modal-content').innerHTML = `
                     <h2>User Info</h2>
                     <p><strong>Name:</strong> ${user.name} ${user.surname}</p>
                     <p><strong>Username:</strong> ${user.username}</p>
                     <p><strong>Age:</strong> ${user.age}</p>
-                    <p><strong>Interests:</strong> ${user.interests}</p>
+                    <p><strong>Interests:</strong><br>${interestsList}</p>
                     <button onclick="closeModal('infoModal')" style="position: sticky; bottom: 0; width: 100%;">Close</button>
                 `;
                 modal.style.display = 'block';
