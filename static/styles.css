@@ -1323,6 +1323,7 @@ body.reset-password button:hover {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden; /* Ensure the container clips any overflow to maintain circular shape */
 }
 
 .avatar svg {

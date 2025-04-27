@@ -66,6 +66,9 @@
                     <select id="theme-select">
                         <option value="light">Light</option>
                         <option value="dark">Dark</option>
+                        <option value="alienora">Alienora's Favorite Theme</option>
+                        <option value="hollow-purple">Hollow Purple</option>
+                        <option value="maniac">Maniac</option>
                     </select>
                 </p>
                 <p>
@@ -97,6 +100,22 @@
             // Update UI indicators
             document.getElementById('theme-select').value = savedTheme;
             document.getElementById('font-size-select').value = savedFontSize;
+        }
+
+        function updateStyles() {
+            const theme = document.getElementById('theme-select').value;
+            const fontSize = document.getElementById('font-size-select').value;
+
+            // Save to localStorage
+            localStorage.setItem('theme', theme);
+            localStorage.setItem('fontSize', fontSize);
+
+            // Apply the selected theme and size
+            document.documentElement.setAttribute('data-theme', theme);
+            document.documentElement.setAttribute('data-size', fontSize);
+
+            // Optional: Provide feedback to the user
+            alert('Styles updated successfully!');
         }
     </script>
 </body>
